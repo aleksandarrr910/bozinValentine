@@ -9,6 +9,10 @@
     :root{
       --bg1:#ff4d6d;
       --bg2:#ff99ac;
+
+      --glass: rgba(255,255,255,.18);
+      --glassBorder: rgba(255,255,255,.28);
+
       --yes:#22c55e;
       --yes2:#16a34a;
       --no:#ef4444;
@@ -20,10 +24,11 @@
 
     body{
       margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       overflow:hidden;
       background:
-        radial-gradient(1200px 800px at 20% 10%, #fff3, transparent 60%),
+        radial-gradient(1200px 800px at 20% 10%, rgba(255,255,255,.25), transparent 60%),
+        radial-gradient(900px 700px at 85% 85%, rgba(255,255,255,.12), transparent 60%),
         linear-gradient(135deg, var(--bg1), var(--bg2));
     }
 
@@ -38,7 +43,7 @@
       position:absolute;
       width:18px; height:18px;
       transform: rotate(45deg);
-      opacity:.75;
+      opacity:.72;
       filter: drop-shadow(0 6px 10px rgba(0,0,0,.15));
       animation: floatUp linear infinite;
     }
@@ -75,12 +80,11 @@
       z-index:1;
     }
 
-    /* NO WHITE RECTANGLE: content is just centered text */
     .content{
       width:min(980px, 96vw);
       text-align:center;
       color:white;
-      text-shadow: 0 10px 28px rgba(0,0,0,.35);
+      text-shadow: 0 10px 28px rgba(0,0,0,.32);
     }
 
     .pill{
@@ -89,23 +93,26 @@
       gap:10px;
       padding:10px 16px;
       border-radius:999px;
-      background: rgba(255,255,255,.18);
-      border: 1px solid rgba(255,255,255,.25);
-      backdrop-filter: blur(10px);
-      font-weight:800;
-      letter-spacing:.3px;
-      margin-bottom:14px;
+      background: var(--glass);
+      border: 1px solid var(--glassBorder);
+      backdrop-filter: blur(12px);
+      font-weight:850;
+      letter-spacing:.2px;
+      margin-bottom:16px;
+      box-shadow: 0 14px 40px rgba(0,0,0,.18);
     }
 
     h1{
-      margin:10px 0 8px;
-      font-size: clamp(30px, 4.5vw, 54px);
-      line-height:1.08;
+      margin:8px 0 10px;
+      font-size: clamp(32px, 4.8vw, 60px);
+      line-height:1.03;
       font-weight: 1000;
+      letter-spacing: -0.5px;
     }
+
     .sub{
-      margin: 0 auto 14px;
-      max-width: 56ch;
+      margin: 0 auto 16px;
+      max-width: 58ch;
       font-size: clamp(15px, 2.2vw, 20px);
       opacity:.95;
     }
@@ -115,7 +122,7 @@
       justify-content:center;
       gap:14px;
       flex-wrap:wrap;
-      margin-top: 16px;
+      margin-top: 18px;
     }
 
     button{
@@ -126,7 +133,7 @@
       padding: 14px 22px;
       border-radius: 999px;
       transition: transform .14s ease, filter .14s ease;
-      box-shadow: 0 16px 40px rgba(0,0,0,.22);
+      box-shadow: 0 18px 45px rgba(0,0,0,.22);
       user-select:none;
       -webkit-tap-highlight-color: transparent;
     }
@@ -147,37 +154,36 @@
 
     .hint{
       margin-top:14px;
-      font-size: 14px;
-      opacity:.95;
+      font-size: 15px;
+      opacity:.98;
     }
 
-    /* screens */
     .screen{ display:none; }
     .screen.active{
       display:block;
       animation: popIn .35s ease-out;
     }
     @keyframes popIn{
-      from{ transform: translateY(8px) scale(.98); opacity:0; }
+      from{ transform: translateY(10px) scale(.98); opacity:0; }
       to{ transform: translateY(0) scale(1); opacity:1; }
     }
 
-    /* Shrek/Fiona image */
+    /* Photo ONLY on YES screen */
     .photo{
-      width: min(360px, 70vw);
+      width: min(360px, 72vw);
       height: auto;
       border-radius: 22px;
       display:block;
-      margin: 0 auto 14px;
-      box-shadow: 0 18px 60px rgba(0,0,0,.25);
+      margin: 12px auto 16px;
+      box-shadow: 0 22px 70px rgba(0,0,0,.28);
       border: 1px solid rgba(255,255,255,.35);
       background: rgba(255,255,255,.08);
     }
 
     .bigLove{
-      font-size: clamp(30px, 4.7vw, 60px);
+      font-size: clamp(30px, 4.7vw, 62px);
       font-weight: 1000;
-      margin: 10px 0 10px;
+      margin: 6px 0 10px;
       line-height:1.05;
     }
     .loveLine{
@@ -207,13 +213,10 @@
 
       <!-- Screen 1 -->
       <div class="screen active" id="askScreen">
-        <div class="pill">💌 I love you Sofija 💞</div>
-
-        <!-- Put your Shrek & Fiona photo file in the SAME folder as valentine.html -->
-        <img class="photo" src="shrek_fiona.png" alt="Shrek & Fiona" />
+        <div class="pill">💌 Bozin's Valentine Invite 💞</div>
 
         <h1>Will you be my Valentine? 💘</h1>
-        <p class="sub">Choose wisely 😌✨</p>
+        <p class="sub">Choose wisely Sofija😌✨</p>
 
         <div class="buttons">
           <button id="yesBtn">YES 💖</button>
@@ -227,11 +230,12 @@
       <div class="screen" id="loveScreen">
         <div class="pill">💝 YAAAAAAAAY I LOVE YOU 💞</div>
 
+        <!-- Photo appears only after YES -->
         <img class="photo" src="shrek_fiona.png" alt="Shrek & Fiona" />
 
         <div class="bigLove">
           I love u the most<br/>
-          my <span style="color:#ffd1dc">Krushevsko Dambo Prle</span> 💘
+          my <span style="color:#ffd1dc">Krushevsko Grne Prle</span> 💘
         </div>
 
         <p class="loveLine">
@@ -249,7 +253,7 @@
     const heartsWrap = document.getElementById("hearts");
     const heartColors = ["#ffffff", "#ffe3ea", "#ffd1dc", "#ffebf1", "#fff0f5"];
 
-    function spawnHearts(count = 30){
+    function spawnHearts(count = 32){
       heartsWrap.innerHTML = "";
       for(let i=0;i<count;i++){
         const h = document.createElement("div");
@@ -258,7 +262,7 @@
         h.style.animationDuration = (6 + Math.random()*8) + "s";
         h.style.animationDelay = (-Math.random()*10) + "s";
         h.style.color = heartColors[Math.floor(Math.random()*heartColors.length)];
-        h.style.setProperty("--s", (0.7 + Math.random()*2.0).toFixed(2));
+        h.style.setProperty("--s", (0.75 + Math.random()*2.0).toFixed(2));
         heartsWrap.appendChild(h);
       }
     }
@@ -273,6 +277,31 @@
 
     let noClicks = 0;
     let yesScale = 1;
+
+    // Button text + hint text per click
+    const noButtonTexts = [
+      "NO 🙈",
+      "NO Stvarno? 😳",
+      "Ushte NO? 😭",
+      "SIGURNA SI SOFIJA? 😤",
+      "POSLEDNA SHANSA… 😅",
+      "STISNI YES 😂",
+      "MISLI UBAVO SOFIJA 😵",
+      "BRO… 😩",
+      "YES E EDINSTVENA OPCIJA PRLE MALO 💖"
+    ];
+
+    const hintTexts = [
+      "Ako stisnesh NO ke bidam taznoto meche Bozin :(",
+      "Probaj pak Sofija !!!😳",
+      "Ne stiskaj NO Bozin ke e tazhen 😭",
+      "Sofija  👀",
+      "Ne se zaebavaj 😤 stisni YES 💖",
+      "Ajde be SOFIJAAAA… 🏃‍♂️💨",
+      "YES e edinstvena opcija 😩",
+      "Prestani da se zaebavash Prle edno😂",
+      "Dosta beshe,morash sea YES da stisnesh… 💨"
+    ];
 
     function updateYesSize(){
       yesBtn.style.transform = `scale(${yesScale})`;
@@ -299,15 +328,13 @@
       noClicks++;
 
       // YES gets bigger every NO click
-      yesScale = Math.min(4.6, yesScale + 0.24);
+      yesScale = Math.min(4.8, yesScale + 0.24);
       updateYesSize();
 
-      // Funny progressive text
-      if(noClicks === 1) hint.textContent = "Hmm… are you sure? 😳";
-      if(noClicks === 2) hint.textContent = "NO is kinda rude 😭";
-      if(noClicks === 3) hint.textContent = "Okay… but YES is looking really good 👀";
-      if(noClicks === 4) hint.textContent = "Stop playing 😤 click YES 💖";
-      if(noClicks >= 5) hint.textContent = "NO button is getting tired… 🏃‍♂️💨";
+      // Update texts
+      const idx = Math.min(noClicks, noButtonTexts.length - 1);
+      noBtn.textContent = noButtonTexts[idx];
+      hint.textContent = hintTexts[idx];
 
       // NO runs away after a few clicks
       if(noClicks >= 4) moveNoButton();
@@ -325,9 +352,8 @@
       askScreen.classList.remove("active");
       loveScreen.classList.add("active");
 
-      // Confetti + more hearts
       launchConfetti();
-      spawnHearts(45);
+      spawnHearts(46);
     });
 
     // ---------- Confetti ----------
