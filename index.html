@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Will you be my Valentine? 💘</title>
+
+  <style>
+    :root{
+      --bg1:#ff4d6d;
+      --bg2:#ff99ac;
+      --yes:#22c55e;
+      --yes2:#16a34a;
+      --no:#ef4444;
+      --no2:#dc2626;
+    }
+
+    *{ box-sizing:border-box }
+    html,body{ height:100% }
+
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      overflow:hidden;
+      background:
+        radial-gradient(1200px 800px at 20% 10%, #fff3, transparent 60%),
+        linear-gradient(135deg, var(--bg1), var(--bg2));
+    }
+
+    /* floating hearts background */
+    .hearts{
+      position:fixed; inset:0;
+      pointer-events:none;
+      overflow:hidden;
+      z-index:0;
+    }
+    .heart{
+      position:absolute;
+      width:18px; height:18px;
+      transform: rotate(45deg);
+      opacity:.75;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,.15));
+      animation: floatUp linear infinite;
+    }
+    .heart:before, .heart:after{
+      content:"";
+      position:absolute;
+      width:18px; height:18px;
+      background: currentColor;
+      border-radius: 50%;
+    }
+    .heart{ background: currentColor; }
+    .heart:before{ left:-9px; top:0; }
+    .heart:after{ top:-9px; left:0; }
+
+    @keyframes floatUp{
+      from{ transform: translateY(110vh) rotate(45deg) scale(var(--s,1)); }
+      to{ transform: translateY(-20vh) rotate(45deg) scale(var(--s,1)); }
+    }
+
+    /* confetti canvas */
+    canvas{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:2;
+    }
+
+    .wrap{
+      position:relative;
+      height:100%;
+      display:grid;
+      place-items:center;
+      padding:24px;
+      z-index:1;
+    }
+
+    /* NO WHITE RECTANGLE: content is just centered text */
+    .content{
+      width:min(980px, 96vw);
+      text-align:center;
+      color:white;
+      text-shadow: 0 10px 28px rgba(0,0,0,.35);
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:10px 16px;
+      border-radius:999px;
+      background: rgba(255,255,255,.18);
+      border: 1px solid rgba(255,255,255,.25);
+      backdrop-filter: blur(10px);
+      font-weight:800;
+      letter-spacing:.3px;
+      margin-bottom:14px;
+    }
+
+    h1{
+      margin:10px 0 8px;
+      font-size: clamp(30px, 4.5vw, 54px);
+      line-height:1.08;
+      font-weight: 1000;
+    }
+    .sub{
+      margin: 0 auto 14px;
+      max-width: 56ch;
+      font-size: clamp(15px, 2.2vw, 20px);
+      opacity:.95;
+    }
+
+    .buttons{
+      display:flex;
+      justify-content:center;
+      gap:14px;
+      flex-wrap:wrap;
+      margin-top: 16px;
+    }
+
+    button{
+      border:none;
+      cursor:pointer;
+      font-weight:1000;
+      letter-spacing:.4px;
+      padding: 14px 22px;
+      border-radius: 999px;
+      transition: transform .14s ease, filter .14s ease;
+      box-shadow: 0 16px 40px rgba(0,0,0,.22);
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    button:active{ transform: scale(.98); }
+
+    #yesBtn{
+      background: linear-gradient(180deg, var(--yes), var(--yes2));
+      color:white;
+      font-size: 18px;
+      transform: scale(1);
+    }
+    #noBtn{
+      background: linear-gradient(180deg, var(--no), var(--no2));
+      color:white;
+      font-size: 18px;
+      position:relative;
+    }
+
+    .hint{
+      margin-top:14px;
+      font-size: 14px;
+      opacity:.95;
+    }
+
+    /* screens */
+    .screen{ display:none; }
+    .screen.active{
+      display:block;
+      animation: popIn .35s ease-out;
+    }
+    @keyframes popIn{
+      from{ transform: translateY(8px) scale(.98); opacity:0; }
+      to{ transform: translateY(0) scale(1); opacity:1; }
+    }
+
+    /* Shrek/Fiona image */
+    .photo{
+      width: min(360px, 70vw);
+      height: auto;
+      border-radius: 22px;
+      display:block;
+      margin: 0 auto 14px;
+      box-shadow: 0 18px 60px rgba(0,0,0,.25);
+      border: 1px solid rgba(255,255,255,.35);
+      background: rgba(255,255,255,.08);
+    }
+
+    .bigLove{
+      font-size: clamp(30px, 4.7vw, 60px);
+      font-weight: 1000;
+      margin: 10px 0 10px;
+      line-height:1.05;
+    }
+    .loveLine{
+      font-size: clamp(16px, 2.4vw, 21px);
+      margin: 0 auto 18px;
+      max-width: 60ch;
+      opacity:.98;
+    }
+    .emojiRow{
+      font-size: clamp(26px, 4vw, 44px);
+      display:flex;
+      justify-content:center;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top: 12px;
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,.18));
+    }
+  </style>
+</head>
+
+<body>
+  <div class="hearts" id="hearts"></div>
+  <canvas id="confetti"></canvas>
+
+  <div class="wrap">
+    <div class="content">
+
+      <!-- Screen 1 -->
+      <div class="screen active" id="askScreen">
+        <div class="pill">💌 I love you Sofija 💞</div>
+
+        <!-- Put your Shrek & Fiona photo file in the SAME folder as valentine.html -->
+        <img class="photo" src="shrek_fiona.png" alt="Shrek & Fiona" />
+
+        <h1>Will you be my Valentine? 💘</h1>
+        <p class="sub">Choose wisely 😌✨</p>
+
+        <div class="buttons">
+          <button id="yesBtn">YES 💖</button>
+          <button id="noBtn">NO 🙈</button>
+        </div>
+
+        <div class="hint" id="hint">If you press NO I will be a sad Bear named Bozin :(</div>
+      </div>
+
+      <!-- Screen 2 -->
+      <div class="screen" id="loveScreen">
+        <div class="pill">💝 YAAAAAAAAY I LOVE YOU 💞</div>
+
+        <img class="photo" src="shrek_fiona.png" alt="Shrek & Fiona" />
+
+        <div class="bigLove">
+          I love u the most<br/>
+          my <span style="color:#ffd1dc">Krushevsko Dambo Prle</span> 💘
+        </div>
+
+        <p class="loveLine">
+          Happy Valentine’s Day! You make everything better and I love you the most baby ❤️
+        </p>
+
+        <div class="emojiRow">💌💖🌹💘🍓✨💞🫶🎀💗💍</div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // ---------- Hearts background ----------
+    const heartsWrap = document.getElementById("hearts");
+    const heartColors = ["#ffffff", "#ffe3ea", "#ffd1dc", "#ffebf1", "#fff0f5"];
+
+    function spawnHearts(count = 30){
+      heartsWrap.innerHTML = "";
+      for(let i=0;i<count;i++){
+        const h = document.createElement("div");
+        h.className = "heart";
+        h.style.left = Math.random()*100 + "vw";
+        h.style.animationDuration = (6 + Math.random()*8) + "s";
+        h.style.animationDelay = (-Math.random()*10) + "s";
+        h.style.color = heartColors[Math.floor(Math.random()*heartColors.length)];
+        h.style.setProperty("--s", (0.7 + Math.random()*2.0).toFixed(2));
+        heartsWrap.appendChild(h);
+      }
+    }
+    spawnHearts();
+
+    // ---------- Main logic ----------
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn  = document.getElementById("noBtn");
+    const askScreen = document.getElementById("askScreen");
+    const loveScreen = document.getElementById("loveScreen");
+    const hint = document.getElementById("hint");
+
+    let noClicks = 0;
+    let yesScale = 1;
+
+    function updateYesSize(){
+      yesBtn.style.transform = `scale(${yesScale})`;
+      yesBtn.style.filter = `brightness(${1 + noClicks*0.035})`;
+    }
+
+    function moveNoButton(){
+      const rect = noBtn.getBoundingClientRect();
+      const padding = 16;
+
+      const maxX = window.innerWidth - rect.width - padding;
+      const maxY = window.innerHeight - rect.height - padding;
+
+      const x = Math.max(padding, Math.random() * maxX);
+      const y = Math.max(padding, Math.random() * maxY);
+
+      noBtn.style.position = "fixed";
+      noBtn.style.left = x + "px";
+      noBtn.style.top = y + "px";
+      noBtn.style.zIndex = 5;
+    }
+
+    noBtn.addEventListener("click", () => {
+      noClicks++;
+
+      // YES gets bigger every NO click
+      yesScale = Math.min(4.6, yesScale + 0.24);
+      updateYesSize();
+
+      // Funny progressive text
+      if(noClicks === 1) hint.textContent = "Hmm… are you sure? 😳";
+      if(noClicks === 2) hint.textContent = "NO is kinda rude 😭";
+      if(noClicks === 3) hint.textContent = "Okay… but YES is looking really good 👀";
+      if(noClicks === 4) hint.textContent = "Stop playing 😤 click YES 💖";
+      if(noClicks >= 5) hint.textContent = "NO button is getting tired… 🏃‍♂️💨";
+
+      // NO runs away after a few clicks
+      if(noClicks >= 4) moveNoButton();
+
+      // After many clicks, NO becomes smaller
+      if(noClicks >= 8){
+        noBtn.style.transform = `scale(${Math.max(0.55, 1 - (noClicks-7)*0.07)})`;
+      }
+    });
+
+    noBtn.addEventListener("mouseenter", () => { if(noClicks >= 4) moveNoButton(); });
+    noBtn.addEventListener("touchstart", () => { if(noClicks >= 4) moveNoButton(); }, {passive:true});
+
+    yesBtn.addEventListener("click", () => {
+      askScreen.classList.remove("active");
+      loveScreen.classList.add("active");
+
+      // Confetti + more hearts
+      launchConfetti();
+      spawnHearts(45);
+    });
+
+    // ---------- Confetti ----------
+    const canvas = document.getElementById("confetti");
+    const ctx = canvas.getContext("2d");
+    let W, H;
+
+    function resize(){
+      W = canvas.width = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resize);
+    resize();
+
+    function rand(min,max){ return Math.random()*(max-min)+min; }
+
+    let confettiPieces = [];
+    function launchConfetti(){
+      confettiPieces = [];
+      const colors = ["#ffffff","#ffe3ea","#ffd1dc","#ff4d6d","#ff99ac","#ff2d55","#ffd700"];
+      const count = 240;
+
+      for(let i=0;i<count;i++){
+        confettiPieces.push({
+          x: rand(0,W),
+          y: rand(-H, 0),
+          r: rand(3,7),
+          vx: rand(-2.2,2.2),
+          vy: rand(2.5,6.7),
+          rot: rand(0,Math.PI*2),
+          vr: rand(-0.18,0.18),
+          c: colors[Math.floor(Math.random()*colors.length)],
+          life: rand(90,170)
+        });
+      }
+      animateConfetti();
+    }
+
+    let animating = false;
+    function animateConfetti(){
+      if(animating) return;
+      animating = true;
+
+      (function loop(){
+        ctx.clearRect(0,0,W,H);
+
+        confettiPieces.forEach(p=>{
+          p.x += p.vx;
+          p.y += p.vy;
+          p.rot += p.vr;
+          p.life -= 1;
+
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          ctx.rotate(p.rot);
+          ctx.fillStyle = p.c;
+          ctx.fillRect(-p.r, -p.r, p.r*2.2, p.r*1.4);
+          ctx.restore();
+        });
+
+        confettiPieces = confettiPieces.filter(p => p.life > 0 && p.y < H + 40);
+
+        if(confettiPieces.length > 0){
+          requestAnimationFrame(loop);
+        } else {
+          ctx.clearRect(0,0,W,H);
+          animating = false;
+        }
+      })();
+    }
+  </script>
+</body>
+</html>
